@@ -1,0 +1,4 @@
+com/maximum/maximumrpc/model/RpcRequest$RpcRequestBuilder.class
+com/maximum/maximumrpc/server/HttpServer.class
+com/maximum/maximumrpc/server/VertxHttpServer.class
+com/maximum/maximumrpc/model/RpcResponse$RpcResponseBuilder.class
