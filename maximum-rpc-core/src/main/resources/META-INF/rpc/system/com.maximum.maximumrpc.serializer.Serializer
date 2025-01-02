@@ -1,0 +1,4 @@
+jdk=com.maximum.maximumrpc.serializer.JdkSerializer
+hessian=com.maximum.maximumrpc.serializer.HessianSerializer
+json=com.maximum.maximumrpc.serializer.JsonSerializer
+kryo=com.maximum.maximumrpc.serializer.KryoSerializer
