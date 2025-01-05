@@ -1,1 +1,2 @@
 etcd=com.maximum.maximumrpc.registry.EtcdRegistry
+zookeeper=com.maximum.maximumrpc.registry.ZookeeperRegistry
