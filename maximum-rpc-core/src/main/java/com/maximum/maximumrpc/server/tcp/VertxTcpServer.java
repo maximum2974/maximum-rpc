@@ -1,14 +1,13 @@
 package com.maximum.maximumrpc.server.tcp;
 
 import com.maximum.maximumrpc.server.HttpServer;
+import io.vertx.core.Handler;
 import io.vertx.core.Vertx;
 import io.vertx.core.buffer.Buffer;
 import io.vertx.core.net.NetServer;
+import io.vertx.core.parsetools.RecordParser;
 
 public class VertxTcpServer implements HttpServer {
-    private byte[] handleRequest(byte[] requestData){
-        return "Hello, Client!".getBytes();
-    }
 
     @Override
     public void doStart(int port) {
@@ -20,15 +19,34 @@ public class VertxTcpServer implements HttpServer {
 
         // 处理请求
         server.connectHandler(socket -> {
-            //处理连接
-            socket.handler(buffer -> {
-                //处理接收到的字节数组
-                byte[] requestData = buffer.getBytes();
-                byte[] responseData = handleRequest(requestData);
-                //发送响应
-                //向连接到服务器的客户端发送数据
-                socket.write(Buffer.buffer(responseData));
+            //构造parser
+            RecordParser parser = RecordParser.newFixed(8);
+            parser.setOutput(new Handler<Buffer>() {
+                //初始化
+                int size = -1;
+                //一次完整的读取（头 + 体）
+                Buffer resultBuffer = Buffer.buffer();
+                @Override
+                public void handle(Buffer buffer) {
+                    if(size == -1){
+                        //读取消息体长度
+                        size = buffer.getInt(4);
+                        parser.fixedSizeMode(size);
+                        //写入头消息到结果
+                        resultBuffer.appendBuffer(buffer);
+                    }else{
+                        //写入体消息到结果
+                        resultBuffer.appendBuffer(buffer);
+                        System.out.println(resultBuffer.toString());
+                        //重置一轮
+                        parser.fixedSizeMode(8);
+                        size = -1;
+                        resultBuffer = Buffer.buffer();
+                    }
+                }
             });
+
+            socket.handler(parser);
         });
 
         // 启动 TCP 服务器并监听指定端口
