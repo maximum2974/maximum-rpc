@@ -1,6 +1,8 @@
 package com.maximum.maximumrpc.config;
 
 
+import com.maximum.maximumrpc.fault.retry.RetryStrategy;
+import com.maximum.maximumrpc.fault.retry.RetryStrategyKeys;
 import com.maximum.maximumrpc.loadbalancer.LoadBalancer;
 import com.maximum.maximumrpc.loadbalancer.LoadBalancerKeys;
 import com.maximum.maximumrpc.serializer.SerializerKeys;
@@ -50,4 +52,9 @@ public class RpcConfig {
      * 负载均衡器
      */
     private String loadBalancer = LoadBalancerKeys.ROUND_ROBIN;
+
+    /**
+     * 重试策略
+     */
+    private String retryStrategy = RetryStrategyKeys.NO;
 }

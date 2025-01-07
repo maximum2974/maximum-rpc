@@ -7,6 +7,8 @@ import cn.hutool.http.HttpResponse;
 import com.maximum.maximumrpc.RpcApplication;
 import com.maximum.maximumrpc.config.RpcConfig;
 import com.maximum.maximumrpc.constant.RpcConstant;
+import com.maximum.maximumrpc.fault.retry.RetryStrategy;
+import com.maximum.maximumrpc.fault.retry.RetryStrategyFactory;
 import com.maximum.maximumrpc.loadbalancer.LoadBalancer;
 import com.maximum.maximumrpc.loadbalancer.LoadBalancerFactory;
 import com.maximum.maximumrpc.model.RpcRequest;
@@ -89,7 +91,13 @@ public class ServiceProxy implements InvocationHandler {
             requestParams.put("methodName", rpcRequest.getMethodName());
             ServiceMetaInfo selectedServiceMetaInfo = loadBalancer.select(requestParams, serviceMetaInfoList);
             //发送TCP请求
-            RpcResponse rpcResponse = VertxTcpClient.doRequest(rpcRequest, selectedServiceMetaInfo);
+            //RpcResponse rpcResponse = VertxTcpClient.doRequest(rpcRequest, selectedServiceMetaInfo);
+
+            //使用重试机制
+            RetryStrategy retryStrategy = RetryStrategyFactory.getInstance(rpcConfig.getRetryStrategy());
+            RpcResponse rpcResponse = retryStrategy.doRetry(() ->
+                    VertxTcpClient.doRequest(rpcRequest, selectedServiceMetaInfo)
+            );
             return rpcResponse.getData();
         }catch (Exception e){
             throw new RuntimeException("调用失败");
