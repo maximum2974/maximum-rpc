@@ -1,6 +1,8 @@
 package com.maximum.maximumrpc.config;
 
 
+import com.maximum.maximumrpc.loadbalancer.LoadBalancer;
+import com.maximum.maximumrpc.loadbalancer.LoadBalancerKeys;
 import com.maximum.maximumrpc.serializer.SerializerKeys;
 import lombok.Data;
 
@@ -43,4 +45,9 @@ public class RpcConfig {
      * 注册中心配置
      */
     private RegistryConfig registryConfig = new RegistryConfig();
+
+    /**
+     * 负载均衡器
+     */
+    private String loadBalancer = LoadBalancerKeys.ROUND_ROBIN;
 }
