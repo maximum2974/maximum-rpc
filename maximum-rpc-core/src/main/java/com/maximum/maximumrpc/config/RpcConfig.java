@@ -3,6 +3,8 @@ package com.maximum.maximumrpc.config;
 
 import com.maximum.maximumrpc.fault.retry.RetryStrategy;
 import com.maximum.maximumrpc.fault.retry.RetryStrategyKeys;
+import com.maximum.maximumrpc.fault.tolerant.TolerantStrategy;
+import com.maximum.maximumrpc.fault.tolerant.TolerantStrategyKeys;
 import com.maximum.maximumrpc.loadbalancer.LoadBalancer;
 import com.maximum.maximumrpc.loadbalancer.LoadBalancerKeys;
 import com.maximum.maximumrpc.serializer.SerializerKeys;
@@ -57,4 +59,9 @@ public class RpcConfig {
      * 重试策略
      */
     private String retryStrategy = RetryStrategyKeys.NO;
+
+    /**
+     * 容错策略
+     */
+    private String tolerantStrategy = TolerantStrategyKeys.FAIL_FAST;
 }

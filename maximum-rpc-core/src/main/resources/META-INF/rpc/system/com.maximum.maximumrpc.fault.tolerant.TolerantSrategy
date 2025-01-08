@@ -1,0 +1,4 @@
+failBack=com.maximum.maximumrpc.fault.tolerant.FailBackTolerantStrategy
+failFast=com.maximum.maximumrpc.fault.tolerant.FailFastTolerantStrategy
+failOver=com.maximum.maximumrpc.fault.tolerant.FailOverTolerantStrategy
+failSafe=com.maximum.maximumrpc.fault.tolerant.FailSafeTolerantStrategy

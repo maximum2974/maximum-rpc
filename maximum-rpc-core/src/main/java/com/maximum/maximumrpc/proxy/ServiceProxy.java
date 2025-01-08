@@ -9,6 +9,8 @@ import com.maximum.maximumrpc.config.RpcConfig;
 import com.maximum.maximumrpc.constant.RpcConstant;
 import com.maximum.maximumrpc.fault.retry.RetryStrategy;
 import com.maximum.maximumrpc.fault.retry.RetryStrategyFactory;
+import com.maximum.maximumrpc.fault.tolerant.TolerantStrategy;
+import com.maximum.maximumrpc.fault.tolerant.TolerantStrategyFactory;
 import com.maximum.maximumrpc.loadbalancer.LoadBalancer;
 import com.maximum.maximumrpc.loadbalancer.LoadBalancerFactory;
 import com.maximum.maximumrpc.model.RpcRequest;
@@ -94,10 +96,18 @@ public class ServiceProxy implements InvocationHandler {
             //RpcResponse rpcResponse = VertxTcpClient.doRequest(rpcRequest, selectedServiceMetaInfo);
 
             //使用重试机制
-            RetryStrategy retryStrategy = RetryStrategyFactory.getInstance(rpcConfig.getRetryStrategy());
-            RpcResponse rpcResponse = retryStrategy.doRetry(() ->
-                    VertxTcpClient.doRequest(rpcRequest, selectedServiceMetaInfo)
-            );
+            RpcResponse rpcResponse;
+            try{
+                RetryStrategy retryStrategy = RetryStrategyFactory.getInstance(rpcConfig.getRetryStrategy());
+                rpcResponse = retryStrategy.doRetry(() ->
+                        VertxTcpClient.doRequest(rpcRequest, selectedServiceMetaInfo)
+                );
+            }catch (Exception e){
+                //容错机制
+                TolerantStrategy tolerantStrategy = TolerantStrategyFactory.getInstance(rpcConfig.getTolerantStrategy());
+                rpcResponse = tolerantStrategy.doTolerant(null, e);
+            }
+
             return rpcResponse.getData();
         }catch (Exception e){
             throw new RuntimeException("调用失败");
